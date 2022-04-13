@@ -33,11 +33,19 @@ module.exports = {
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js"],
+        fallback: {
+          "fs": false,
+          "path": require.resolve("path-browserify"),
+          "crypto": require.resolve("crypto-js")
+        }
     },
     plugins: [
         new CopyPlugin({
             patterns: [{ from: ".", to: "../", context: "public" }],
             options: {},
+        }),
+        new webpack.ProvidePlugin({
+          Buffer: ['buffer', 'Buffer'],
         }),
     ],
 };
