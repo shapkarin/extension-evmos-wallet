@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@cosmjs/proto-signing": "^0.28.3",
+    "@cosmjs/stargate": "^0.28.3",
     "@tharsis/address-converter": "^0.1.7",
     "@tharsis/provider": "^0.2.4",
     "@tharsis/transactions": "^0.2.2",

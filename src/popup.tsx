@@ -4,7 +4,7 @@ import { ethToEvmos, evmosToEth, cosmosToEth } from "@tharsis/address-converter"
 import web3 from 'web3';
 import { AccountData, DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import axios from 'axios';
-import { createWallet, getAccount } from './wallet';
+import { createWallet, getAccount, initClient, getBalance } from './wallet';
 // import interfaces from './interfaces';
 
 const Popup = () => {
@@ -13,13 +13,18 @@ const Popup = () => {
   const [address, setAddress] = useState<string>('');
   const [txs, setTxs] = useState([]);
   const [wallet, setWallet] = useState<DirectSecp256k1HdWallet>();
-
+  // todo: client type
+  const [client, setClient] = useState<any>();
+  const [balance, setBalance] = useState<string>('')
+  const [blockchain, setBlockchain] = useState('evmos');
   
-  const changeNet = function () {
-    if (address.startsWith('0x')){
-      setAddress(ethToEvmos(address));
-    } else {
+  const changeBlockchain = function () {
+    if (blockchain === 'evmos'){
       setAddress(evmosToEth(address));
+      setBlockchain('eth')
+    } else {
+      setAddress(ethToEvmos(address));
+      setBlockchain('evmos')
     }
   };
 
@@ -27,8 +32,12 @@ const Popup = () => {
     (async () => {
       const wallet = await createWallet();
       const { address } = await getAccount(wallet);
+      const client = await initClient();
+      const balance = await getBalance(client, address);
+      setClient(client);
       setWallet(wallet);
       setAddress(address);
+      // setBalance(balance);
     })();
   }, [])
 
@@ -37,24 +46,13 @@ const Popup = () => {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     };
-    (async () => {
-      try {
-      // const { data: { txs: send = [] } } = await axios.get<TransactionsResponse>(`http://127.0.0.1:26657/txs?transfer.sender=${address}&message.module=bank`);
-      const { data: { txs: send = [] } } = await axios.get(`http://127.0.0.1:26657/txs?transfer.sender=${address}&message.module=bank`);
-      const { data: { txs: receive = [] } }  = await axios.get(`http://127.0.0.1:26657/txs?transfer.recipient=${address}&message.module=bank`);
-      let txs = [...send, ...receive];
-      if(address.startsWith('0x')){} 
-      } catch (e) {
-        console.log(e);
-      }
-      setTxs(txs);
-    })();
+    // (async () => {)();
   }, [address])
 
   return (
     <>
       <div>{ address }</div>
-      <button onClick={changeNet}>Switch</button>
+      <button onClick={changeBlockchain}>Switch</button>
       {txs.map((tx) => tx)}
     </>
   );
