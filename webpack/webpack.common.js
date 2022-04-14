@@ -36,7 +36,8 @@ module.exports = {
         fallback: {
           "fs": false,
           "path": require.resolve("path-browserify"),
-          "crypto": require.resolve("crypto-js")
+          "crypto": require.resolve("crypto-js"),
+          "os": require.resolve("os-browserify/browser")
         }
     },
     plugins: [
