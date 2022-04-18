@@ -5,6 +5,7 @@ import { AccountData } from '@cosmjs/proto-signing';
 import { stringToPath } from '@cosmjs/crypto';
 // import getTransactions from @tharsis/transactions
 import { StargateClient } from "@cosmjs/stargate";
+export { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 
 export async function createWallet() {
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
@@ -23,7 +24,8 @@ export async function getAccount(wallet: DirectSecp256k1HdWallet) {
 }
 
 export async function initClient(){
-  return StargateClient.connect('http://127.0.0.1:26657');
+  const client = new Tendermint34Client();
+  return client.connect('http://127.0.0.1:26657');
 }
 
 // todo: add type
